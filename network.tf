@@ -96,13 +96,12 @@ resource "aws_route_table_association" "private_rt_associate" {
   route_table_id = aws_route_table.private_rt.id
 }
 
-
 module "app_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "App-SG"
   description = "App SG for web app"
-  vpc_id      = data.aws_vpc.minha_vpc.id
+  vpc_id      = aws_vpc.minha_vpc.id
   ingress_with_cidr_blocks = [
     {
       from_port   = 80
@@ -121,12 +120,12 @@ module "ec2_app_instance" {
 
   name = "Web-App-Instance"
 
-  ami                    = "ami-07caf09b362be10b8"
+  ami                    = "ami-06b21ccaeff8cd686"
   instance_type          = "t2.micro"
   key_name               = "vockey"
   monitoring             = true
   vpc_security_group_ids = [module.app_sg.security_group_id]
-  subnet_id              = var.subnet_id
+  subnet_id              = aws_subnet.public_subnet.id
   user_data              = file("./dependencias.sh")
 }
 
